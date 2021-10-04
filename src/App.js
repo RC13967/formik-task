@@ -20,10 +20,10 @@ function App() {
             <FontAwesomeIcon icon={faLaughWink} size="2x" /><span>Dashboard</span>
           </div>
         </Link>
-        <Link className="link" to="/users">
+        <Link className="link" to="/products">
           <div className="nav-items" >
             <FontAwesomeIcon icon={faList} size="1x" />
-            List Users
+            List products
           </div>
         </Link>
         <hr />
@@ -47,7 +47,7 @@ function App() {
           <div className="topnavrightpart">
             <div className="topnavbellicon"><FontAwesomeIcon icon={faBell} /></div>
             <div className="topnavbellicon"><FontAwesomeIcon icon={faEnvelope} /></div>
-            <div className="topnavusername">douglas McGee</div>
+            <div className="topnavproductname">douglas McGee</div>
           </div>
         </div>
         <Routes />
@@ -69,19 +69,19 @@ function Routes() {
           <Route path="/Dashboard">
             <Dashboard />
           </Route>
-          <Route path="/users">
-            <Listusers />
+          <Route path="/products">
+            <Listproducts />
           </Route>
 
-          <Route path="/create-user">
-            <Createuser />
+          <Route path="/create-product">
+            <Createproduct />
           </Route>
           {/* "/:id" is dynamic, which is formed when the corresponding button is clicked */}
-          <Route path="/edit-user/:id">
-            <Edituser />
+          <Route path="/edit-product/:id">
+            <Editproduct />
           </Route>
-          <Route path="/edit-profile/:id">
-            <Editprofile />
+          <Route path="/edit-price/:id">
+            <Editprice />
           </Route>
           <Route exact path="/">
             <Redirect to="/Dashboard" />
@@ -95,17 +95,17 @@ function Routes() {
 function Dashboard() {
   return (
     <div className="dashboard-container">
-      <Link className="dashboard-content" to="/create-user">Create User</Link><br />
-      <Link className="dashboard-content" to="/users">List Users</Link>
+      <Link className="dashboard-content" to="/create-product">Create product</Link><br />
+      <Link className="dashboard-content" to="/products">List products</Link>
     </div>
   )
 }
-//creates new user
-function Createuser() {
-  const addUser = (user) => {
-    fetch("https://6121377ff5849d0017fb41c6.mockapi.io/users", {
+//creates new product
+function Createproduct() {
+  const addproduct = (product) => {
+    fetch("https://6121377ff5849d0017fb41c6.mockapi.io/products", {
       method: "POST",
-      body: JSON.stringify(user),
+      body: JSON.stringify(product),
       headers: {
         "Content-Type": "application/json",
       },
@@ -116,103 +116,102 @@ function Createuser() {
     initialValues: {
       name: "",
       pic: "",
-      details: "",
+      price: "",
     },
     validationSchema: yup.object({
       name: yup.string()
-        .min(3, "please enter longer user name")
-        .required("please provide user name"),
+        .min(3, "please enter longer product name")
+        .required("please provide product name"),
       pic: yup.string()
         .min(3, "please enter longer image url")
         .required("please provide image url"),
-      details: yup.string()
-        .min(3, "please enter longer user details")
-        .required("please provide user details")
+      price: yup.number()
+        .required("please provide valid price (a number)")
     }),
-    onSubmit: (user) => {
-      addUser(user)
+    onSubmit: (product) => {
+      addproduct(product)
     },
   });
   return (
     <div className="new-input-boxes">
       <form onSubmit={formik.handleSubmit}>
-        <input className="input-box name-input" placeholder="user name..."
+        <input className="input-box name-input" placeholder="product name..."
           name="name" onChange={formik.handleChange} value={formik.values.name} /><br/>
         {formik.touched.name && formik.errors.name ? (
           <p className = "errors">{formik.errors.name}</p>
         ) : ("")
         }
-        <input className="input-box pic-input" placeholder="user image..."
+        <input className="input-box pic-input" placeholder="product image..."
           name="pic" onChange={formik.handleChange} value={formik.values.pic} /><br/>
         {formik.touched.pic && formik.errors.pic ? (
           <p className = "errors">{formik.errors.pic}</p>
         ) : ("")
         }
-        <textarea rows="3" placeholder="user details..." className="input-box"
-          name="details" onChange={formik.handleChange} value={formik.values.details} />
-        {formik.touched.details && formik.errors.details ? (
-          <p className = "errors">{formik.errors.details}</p>
+        <textarea rows="3" placeholder="product price..." className="input-box"
+          name="price" onChange={formik.handleChange} value={formik.values.price} />
+        {formik.touched.price && formik.errors.price ? (
+          <p className = "errors">{formik.errors.price}</p>
         ) : ("")
         }
-        {/*user list will be updated by adding the new user details */}
-        <button className="input-button" type="submit">Add User</button><br />
+        {/*product list will be updated by adding the new product price */}
+        <button className="input-button" type="submit">Add product</button><br />
       </form>
     </div>
   )
 }
-//lists the users with details
-function Listusers() {
+//lists the products with price
+function Listproducts() {
   const [newlist, setnewlist] = useState([]);
   const history = useHistory();
   //fetched data from API
-  function getUsers() {
-    fetch("https://6121377ff5849d0017fb41c6.mockapi.io/users", {
+  function getproducts() {
+    fetch("https://6121377ff5849d0017fb41c6.mockapi.io/products", {
       method: "GET"
     })
       .then((data) => data.json())
-      .then((users) => setnewlist(users));
+      .then((products) => setnewlist(products));
   }
-  //deletes the user from API with the id
-  function deleteUser(id) {
-    fetch(`https://6121377ff5849d0017fb41c6.mockapi.io/users/${id}`, {
+  //deletes the product from API with the id
+  function deleteproduct(id) {
+    fetch(`https://6121377ff5849d0017fb41c6.mockapi.io/products/${id}`, {
       method: "DELETE"
     })
       .then((data) => data.json())
-      .then(() => getUsers());
+      .then(() => getproducts());
   }
   //To execute only once while loading
   useEffect(() => {
-    getUsers();
+    getproducts();
   }, []);
   return (
-    <div className="list-users">
-      {newlist.map(({ name, pic, details, id }) =>
+    <div className="list-products">
+      {newlist.map(({ name, pic, price, id }) =>
         <div className="card">
           <img src={pic} alt = "" />
-          <div className="username">{name}</div>
-          <div className="profile">{details}</div>
+          <div className="productname">{name}</div>
+          <div className="price">${price}.00</div>
           <div className="list-buttons">
             {/*routes to the new path with the current id, when edit button is clicked */}
-            <button onClick={() => history.push("/edit-user/" + id)}>Edit User</button>
-            {/*removes the user with the current id from the list, when delete button is clicked */}
-            <button className="delete-button" onClick={() => deleteUser(id)} >Delete User</button><br />
-            <button className="profile-button" onClick={() => history.push("/edit-profile/" + id)}>Edit Profile</button>
+            <button onClick={() => history.push("/edit-product/" + id)}>Edit product</button>
+            {/*removes the product with the current id from the list, when delete button is clicked */}
+            <button className="delete-button" onClick={() => deleteproduct(id)} >Delete product</button><br />
+            <button className="price-button" onClick={() => history.push("/edit-price/" + id)}>Edit price</button>
           </div>
         </div>)}
     </div>
   )
 }
-//edits the user 
-function Edituser() {
+//edits the product 
+function Editproduct() {
   // takes the id from the dynamic path using the hook useparams 
   const { id } = useParams();
-  function edit(user) {
-    fetch(`https://6121377ff5849d0017fb41c6.mockapi.io/users/${id}`, {
+  function edit(product) {
+    fetch(`https://6121377ff5849d0017fb41c6.mockapi.io/products/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(user)
+      body: JSON.stringify(product)
     })
       .then((data) => data.json())
   };
@@ -223,73 +222,72 @@ function Edituser() {
     },
     validationSchema: yup.object({
       name: yup.string()
-        .min(3, "please enter longer user name")
-        .required("please provide user name"),
+        .min(3, "please enter longer product name")
+        .required("please provide product name"),
       pic: yup.string()
         .min(3, "please enter longer image url")
         .required("please provide image url")
     }),
-    onSubmit: (user) => {
-      edit(user)
+    onSubmit: (product) => {
+      edit(product)
     },
   });
   return (
     <div className="new-input-boxes">
       <form onSubmit={formik.handleSubmit}>
-        <input className="input-box name-input" placeholder="user name..."
+        <input className="input-box name-input" placeholder="product name..."
           name="name" onChange={formik.handleChange} value={formik.values.name} /><br/>
         {formik.touched.name && formik.errors.name ? (
           <p className = "errors">{formik.errors.name}</p>
         ) : ("")
         }
-        <input placeholder="user image..." className="input-box pic-input"
+        <input placeholder="product image..." className="input-box pic-input"
           name="pic" onChange={formik.handleChange} value={formik.values.pic} /><br/>
         {formik.touched.pic && formik.errors.pic ? (
           <p className = "errors">{formik.errors.pic}</p>
         ) : ("")
         }
-        <button type="submit" className="input-button">Edit User</button><br />
+        <button type="submit" className="input-button">Edit product</button><br />
       </form>
     </div>
   )
 }
-//edits profile details
-function Editprofile() {
+//edits price price
+function Editprice() {
   // takes the id from the dynamic path using the hook useparams 
   const { id } = useParams();
-  //edits the profile in API with the id
-  function edit(user) {
-    fetch(`https://6121377ff5849d0017fb41c6.mockapi.io/users/${id}`, {
+  //edits the price in API with the id
+  function edit(product) {
+    fetch(`https://6121377ff5849d0017fb41c6.mockapi.io/products/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(user)
+      body: JSON.stringify(product)
     })
   }
   const formik = useFormik({
     initialValues: {
-      details: "",
+      price: "",
     },
     validationSchema: yup.object({
-      details: yup.string()
-        .min(3, "please enter longer user details")
-        .required("please provide user details")
+      price: yup.number()
+        .required("please provide valid price (a number)")
     }),
-    onSubmit: (user) => {
-      edit(user)
+    onSubmit: (product) => {
+      edit(product)
     },
   });
   return (
-    <div className="profile-page">
+    <div className="price-page">
       <form onSubmit={formik.handleSubmit}>
-        <textarea rows="3" placeholder="user profile..." className="input-box"
-          name="details" onChange={formik.handleChange} value={formik.values.details} /><br />
-        {formik.touched.details && formik.errors.details ? (
-          <p className = "errors">{formik.errors.details}</p>
+        <textarea rows="3" placeholder="product price..." className="input-box"
+          name="price" onChange={formik.handleChange} value={formik.values.price} /><br />
+        {formik.touched.price && formik.errors.price ? (
+          <p className = "errors">{formik.errors.price}</p>
         ) : ("")
         }
-        <button type = "submit" className="input-button">Edit User profile</button><br />
+        <button type = "submit" className="input-button">Edit product price</button><br />
       </form>
     </div>
   )

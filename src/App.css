@@ -56,7 +56,7 @@ body {
   gap: 2rem;
   color: #a6a8a4;
 }
-.topnavusername{
+.topnavproductname{
   color:rgb(49, 49, 49);
   display: none;
 }
@@ -166,7 +166,7 @@ hr {
   font-size: larger;
   border: none;
 }
-.list-users{
+.list-products{
   display: grid;
   gap: 1.5rem;
   justify-content: center;
@@ -179,8 +179,10 @@ hr {
 }
 img{
   border-radius: 6px;
+  width: 290px;
+  height: 150px;
 }
-.username{
+.productname{
   font-weight: bold;
   font-size: larger;
 }
@@ -209,17 +211,17 @@ button:focus{
 .delete-button{
   background-color: crimson;
 }
-.profile-button{
+.price-button{
   background-color: #2758e9;
 }
-.profile-page{
+.price-page{
   display: grid;
   justify-content: center;
   font-size: larger;
   margin-top: 4rem;
   text-align: center;
 }
-.edit-profile-button{
+.edit-price-button{
   width: fit-content;
   padding: 0.5rem;
   font-size: larger;
@@ -246,7 +248,7 @@ button:focus{
   }
 }
 @media (min-width: 960px) {
-  .topnavusername{
+  .topnavproductname{
     display: block;
   }
 }
